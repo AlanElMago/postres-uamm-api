@@ -1,0 +1,6 @@
+@PostresUAMMApi_HostAddress = http://localhost:5222
+
+GET {{PostresUAMMApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
