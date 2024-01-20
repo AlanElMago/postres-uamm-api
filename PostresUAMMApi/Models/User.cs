@@ -1,4 +1,5 @@
 ﻿using Google.Cloud.Firestore;
+using PostresUAMMApi.Enums;
 
 namespace PostresUAMMApi.Models;
 
@@ -8,8 +9,12 @@ public class User
     [FirestoreDocumentId]
     public string? Id { get; set; }
 
-    [FirestoreProperty(Name = "roleIds")]
-    public List<DocumentReference> RoleIds { get; set; } = [];
+    [FirestoreProperty(Name = "firebaseAuthUid")]
+    public string? FirebaseAuthUid { get; set; }
 
-    public List<Role> Roles { get; } = [];
+    [FirestoreProperty(Name = "roles")]
+    public List<RolesEnum> Roles { get; set; } = [RolesEnum.None];
+
+    [FirestoreProperty(Name = "isEnabled")]
+    public bool IsEnabled { get; set; } = true;
 }

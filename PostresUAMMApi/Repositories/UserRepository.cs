@@ -13,15 +13,51 @@ public class UserRepository(FirestoreDb firestoreDb)
         QuerySnapshot allUsersQuerySnapshot = await allUsersQuery.GetSnapshotAsync();
         List<User> users = allUsersQuerySnapshot.Select(userDocSnapshot => userDocSnapshot.ConvertTo<User>()).ToList();
 
-        Query allRolesQuery = _firestoreDb.Collection("roles");
-        QuerySnapshot allRolesQuerySnapshot = await allRolesQuery.GetSnapshotAsync();        
-        List<Role> roles = allRolesQuerySnapshot.Select(roleDocSnapshot => roleDocSnapshot.ConvertTo<Role>()).ToList();
+        return users;
+    }
 
-        foreach (User user in users)
+    public async Task<User> GetUserAsync(string id)
+    {
+        DocumentSnapshot userDocSnapshot = await _firestoreDb.Collection("users").Document(id).GetSnapshotAsync();
+        User user = userDocSnapshot.ConvertTo<User>();
+
+        return user;
+    }
+
+    public async Task<User> GetUserByFirebaseUidAsync(string firebaseAuthUid)
+    {
+        Query userQuery = _firestoreDb.Collection("users").WhereEqualTo("firebaseAuthUid", firebaseAuthUid);
+        QuerySnapshot userQuerySnapshot = await userQuery.GetSnapshotAsync();
+
+        if (userQuerySnapshot.Count <= 0)
         {
-            user.Roles.AddRange(roles.Where(role => user.RoleIds.Any(userRoleId => userRoleId.Id == role.Id)));
+            throw new InvalidOperationException($"User with firebaseAuthUid {firebaseAuthUid} does not exist in the database");
         }
 
-        return users;
+        User user = userQuerySnapshot.Documents[0].ConvertTo<User>();
+
+        return user;
+    }
+
+    public async Task<User> AddUserAsync(User user)
+    {
+        CollectionReference usersCollectionReference = _firestoreDb.Collection("users");
+        DocumentReference documentReference = await usersCollectionReference.AddAsync(user);
+        DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+        User newUser = documentSnapshot.ConvertTo<User>();
+
+        return newUser;
+    }
+
+    public async Task<User> UpdateUserAsync(string id, User user)
+    {
+        DocumentReference documentReference = _firestoreDb.Collection("users").Document(id);
+
+        await documentReference.SetAsync(user, SetOptions.Overwrite);
+
+        DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+        User updatedUser = documentSnapshot.ConvertTo<User>();
+
+        return updatedUser;
     }
 }
