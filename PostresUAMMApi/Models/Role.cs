@@ -8,6 +8,6 @@ public class Role()
     [FirestoreDocumentId]
     public string? Id { get; set; }
 
-    [FirestoreProperty]
+    [FirestoreProperty(Name = "name")]
     public string? Name { get; set; }
 }
