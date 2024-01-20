@@ -9,7 +9,6 @@ public class UserRepositoryTests
 {
     private FirestoreDb? _firestoreDb;
     private UserRepository? _userRepository;
-    private RoleRepository? _roleRepository;
 
     [SetUp]
     public void Setup()
@@ -26,8 +25,7 @@ public class UserRepositoryTests
         FirestoreDbBuilder builder = new() { ProjectId = projectId };
 
         _firestoreDb = builder.Build();
-        _roleRepository = new RoleRepository(_firestoreDb);
-        _userRepository = new UserRepository(_firestoreDb, _roleRepository);
+        _userRepository = new UserRepository(_firestoreDb);
     }
 
     [Test]
