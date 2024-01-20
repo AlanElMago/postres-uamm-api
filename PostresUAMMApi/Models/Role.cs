@@ -1,8 +1,13 @@
-﻿namespace PostresUAMMApi.Models;
+﻿using Google.Cloud.Firestore;
 
-public class Role(string id, string name)
+namespace PostresUAMMApi.Models;
+
+[FirestoreData]
+public class Role()
 {
-    public string? Id { get; } = id;
+    [FirestoreDocumentId]
+    public string? Id { get; set; }
 
-    public string? Name { get; } = name;
+    [FirestoreProperty]
+    public string? Name { get; set; }
 }

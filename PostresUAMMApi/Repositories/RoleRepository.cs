@@ -11,17 +11,8 @@ public class RoleRepository(FirestoreDb firestoreDb)
     {
         Query allRolesQuery = _firestoreDb.Collection("roles");
         QuerySnapshot allRolesQuerySnapshot = await allRolesQuery.GetSnapshotAsync();
-        List<Role> roles = new(4);
-
-        foreach (DocumentSnapshot roleDocSnapshot in allRolesQuerySnapshot)
-        {
-            string roleId = roleDocSnapshot.Id;
-            string roleName = roleDocSnapshot.GetValue<string>("name");
-
-            roles.Add(new Role(roleId, roleName));
-        }
-
-        return roles;
+        
+        return allRolesQuerySnapshot.Select(roleDocSnapshot => roleDocSnapshot.ConvertTo<Role>()).ToList();;
     }
 
     public async Task<Role> GetRoleAsync(string roleId)
@@ -34,8 +25,6 @@ public class RoleRepository(FirestoreDb firestoreDb)
             throw new Exception($"Role with id {roleId} does not exist in the database");
         }
 
-        string roleName = roleDocSnapshot.GetValue<string>("name");
-
-        return new Role(roleId, roleName);
+        return roleDocSnapshot.ConvertTo<Role>();
     }
 }
