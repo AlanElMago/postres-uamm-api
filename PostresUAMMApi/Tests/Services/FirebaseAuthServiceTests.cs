@@ -48,10 +48,10 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        string idToken = await _firebaseAuthService!.SignUp(email, password);
+        UserCredential userCredential = await _firebaseAuthService!.SignUp(email, password);
 
         // Assert
-        Assert.That(idToken, Is.Not.Null);
+        Assert.That(userCredential, Is.Not.Null);
     }
 
     [Test]
