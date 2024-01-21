@@ -29,6 +29,7 @@ builder.Services.AddScoped<FirebaseAuthClient>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ISellerRepository, SellerRepository>();
 
 builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
