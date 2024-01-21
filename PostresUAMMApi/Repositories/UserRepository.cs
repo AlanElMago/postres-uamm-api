@@ -3,7 +3,20 @@ using PostresUAMMApi.Models;
 
 namespace PostresUAMMApi.Repositories;
 
-public class UserRepository(FirestoreDb firestoreDb)
+public interface IUserRepository
+{
+    Task<List<User>> GetUsersAsync();
+
+    Task<User> GetUserAsync(string id);
+
+    Task<User> GetUserByFirebaseUidAsync(string firebaseAuthUid);
+
+    Task<User> AddUserAsync(User user);
+
+    Task<User> UpdateUserAsync(string id, User user);
+}
+
+public class UserRepository(FirestoreDb firestoreDb) : IUserRepository
 {
     private readonly FirestoreDb _firestoreDb = firestoreDb;
 
@@ -11,7 +24,9 @@ public class UserRepository(FirestoreDb firestoreDb)
     {
         Query usersCollQuery = _firestoreDb.Collection("users");
         QuerySnapshot allUsersQuerySnapshot = await usersCollQuery.GetSnapshotAsync();
-        List<User> users = allUsersQuerySnapshot.Select(userDocSnapshot => userDocSnapshot.ConvertTo<User>()).ToList();
+        List<User> users = allUsersQuerySnapshot
+            .Select(userDocSnapshot => userDocSnapshot.ConvertTo<User>())
+            .ToList();
 
         return users;
     }
@@ -19,6 +34,12 @@ public class UserRepository(FirestoreDb firestoreDb)
     public async Task<User> GetUserAsync(string id)
     {
         DocumentSnapshot userDocSnapshot = await _firestoreDb.Collection("users").Document(id).GetSnapshotAsync();
+
+        if (!userDocSnapshot.Exists)
+        {
+            throw new InvalidOperationException($"User with id {id} does not exist in the database");
+        }
+
         User user = userDocSnapshot.ConvertTo<User>();
 
         return user;
