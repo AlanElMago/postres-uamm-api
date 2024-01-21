@@ -3,7 +3,20 @@ using PostresUAMMApi.Models;
 
 namespace PostresUAMMApi.Repositories;
 
-public class CustomerRepository(FirestoreDb firestoreDb)
+public interface ICustomerRepository
+{
+    Task<List<Customer>> GetCustomersAsync();
+
+    Task<Customer> GetCustomerAsync(string id);
+
+    Task<Customer> GetCustomerByUserIdAsync(string userId);
+
+    Task<Customer> AddCustomerAsync(Customer customer);
+
+    Task<Customer> UpdateCustomerAsync(string id, Customer customer);
+}
+
+public class CustomerRepository(FirestoreDb firestoreDb) : ICustomerRepository
 {
     private readonly FirestoreDb _firestoreDb = firestoreDb;
 
