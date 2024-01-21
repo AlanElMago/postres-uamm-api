@@ -65,12 +65,12 @@ public class FirebaseAuthService(
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         string userIdToken = await userCredential.User.GetIdTokenAsync();
-        StringContent content = new($@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userIdToken}""}}");
-
-        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
         string requestUri = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={_firebaseAuthConfig.ApiKey}";
-        HttpResponseMessage response = await httpClient.PostAsync(requestUri, content);
+        StringContent stringContent = new(
+            $@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userIdToken}""}}",
+            new MediaTypeHeaderValue("application/json"));
+
+        HttpResponseMessage response = await httpClient.PostAsync(requestUri, stringContent);
 
         response.EnsureSuccessStatusCode();
     }
