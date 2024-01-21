@@ -54,7 +54,7 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        UserCredential userCredential = await _firebaseAuthService!.SignUp(email, password);
+        UserCredential userCredential = await _firebaseAuthService!.SignUpAsync(email, password);
 
         // Assert
         Assert.That(userCredential, Is.Not.Null);
@@ -68,7 +68,7 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        string idToken = await _firebaseAuthService!.Login(email, password);
+        string idToken = await _firebaseAuthService!.LoginAsync(email, password);
 
         // Assert
         Assert.That(idToken, Is.Not.Null);
@@ -82,7 +82,7 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        await _firebaseAuthService!.Login(email, password);
+        await _firebaseAuthService!.LoginAsync(email, password);
 
         // Assert
         Assert.DoesNotThrow(() => _firebaseAuthService.Logout());

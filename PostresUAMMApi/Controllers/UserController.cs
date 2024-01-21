@@ -23,7 +23,7 @@ public class UserController(
     {
         try
         {
-            UserCredential userCredential = await _firebaseAuthService.SignUpCustomer(form);
+            UserCredential userCredential = await _firebaseAuthService.SignUpCustomerAsync(form);
             Customer newCustomer = await _userService.AddCustomerAsync(userCredential);
 
             return StatusCode((int) HttpStatusCode.Created, newCustomer);

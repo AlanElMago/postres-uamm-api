@@ -6,11 +6,11 @@ namespace PostresUAMMApi.Services;
 
 public interface IFirebaseAuthService
 {
-    Task<UserCredential> SignUp(string email, string password);
+    Task<UserCredential> SignUpAsync(string email, string password);
 
-    Task<UserCredential> SignUpCustomer(UserRegistrationForm form);
+    Task<UserCredential> SignUpCustomerAsync(UserRegistrationForm form);
 
-    Task<string> Login(string email, string password);
+    Task<string> LoginAsync(string email, string password);
 
     void Logout();
 
@@ -24,7 +24,7 @@ public class FirebaseAuthService(
     private readonly FirebaseAuthClient _firebaseAuthClient = firebaseAuthClient;
     private readonly FirebaseAuthConfig _firebaseAuthConfig = firebaseAuthConfig;
 
-    public async Task<UserCredential> SignUp(string email, string password)
+    public async Task<UserCredential> SignUpAsync(string email, string password)
     {
         UserCredential userCredential = await _firebaseAuthClient.CreateUserWithEmailAndPasswordAsync(email, password);
 
@@ -33,7 +33,7 @@ public class FirebaseAuthService(
         return userCredential;
     }
 
-    public async Task<UserCredential> SignUpCustomer(UserRegistrationForm form)
+    public async Task<UserCredential> SignUpCustomerAsync(UserRegistrationForm form)
     {
         ArgumentNullException.ThrowIfNull(form);
         ArgumentNullException.ThrowIfNull(form.Email);
@@ -44,10 +44,10 @@ public class FirebaseAuthService(
             throw new ArgumentException("El correo electrónico debe ser de la UAT");
         }
 
-        return await SignUp(form.Email, form.Password);
+        return await SignUpAsync(form.Email, form.Password);
     }
 
-    public async Task<string> Login(string email, string password)
+    public async Task<string> LoginAsync(string email, string password)
     {
         UserCredential userCredential = await _firebaseAuthClient.SignInWithEmailAndPasswordAsync(email, password);
 
