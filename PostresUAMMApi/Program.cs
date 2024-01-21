@@ -16,16 +16,19 @@ Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToFireb
 
 builder.Configuration.AddUserSecrets("382d69e6-8486-43ba-a6b4-edb9cde00db0");
 
-builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
+builder.Services.AddSingleton(new FirebaseAuthConfig
 {
     ApiKey = builder.Configuration["FirebaseWebApiKey"],
     AuthDomain = $"{firebaseProjectName}.firebaseapp.com",
     Providers = new FirebaseAuthProvider[] { new EmailProvider() }
-}));
+});
+
+builder.Services.AddScoped<FirebaseAuthClient>();
 
 builder.Services.AddSingleton(new FirestoreDbBuilder { ProjectId = firebaseProjectName }.Build());
 
 // Add services to the container.
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 

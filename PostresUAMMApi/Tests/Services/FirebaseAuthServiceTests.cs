@@ -36,8 +36,14 @@ public class FirebaseAuthServiceTests()
         };
 
         FirebaseAuthClient firebaseAuthClient = new (_firebaseAuthConfig);
+        FirebaseAuthConfig firebaseAuthConfig = new FirebaseAuthConfig()
+        {
+            ApiKey = firebaseWebApiKey,
+            AuthDomain = $"{firebaseProjectName}.firebaseapp.com",
+            Providers = new FirebaseAuthProvider[] { new EmailProvider() }
+        };
 
-        _firebaseAuthService = new(firebaseAuthClient);
+        _firebaseAuthService = new(firebaseAuthClient, firebaseAuthConfig);
     }
 
     [Test]
