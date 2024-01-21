@@ -30,16 +30,20 @@ public class UserService(
         Models.User newUser = await AddUserAsync(new Models.User
         {
             FirebaseAuthUid = userCredential.User.Uid,
+            FullName = userCredential.User.Info.DisplayName,
             Roles = [ RolesEnum.Customer ]
         });
 
-        return await _customerRepository.AddCustomerAsync(new Models.Customer
+        Models.Customer newCustomer = await _customerRepository.AddCustomerAsync(new Models.Customer
         {
             UserId = newUser.Id,
             CustomerType = userCredential.User.Info.Email.EndsWith("@alumnos.uat.edu.mx")
                 ? CustomerTypesEnum.Student
                 : CustomerTypesEnum.Teacher,
-            User = newUser
         });
+
+        newCustomer.User = newUser;
+
+        return newCustomer;
     }
 }

@@ -51,10 +51,11 @@ public class FirebaseAuthServiceTests()
     {
         // Arrange
         string email = "test@example.com";
+        string fullName = "Test User";
         string password = "password";
 
         // Act
-        UserCredential userCredential = await _firebaseAuthService!.SignUpAsync(email, password);
+        UserCredential userCredential = await _firebaseAuthService!.SignUpAsync(email, password, fullName);
 
         // Assert
         Assert.That(userCredential, Is.Not.Null);

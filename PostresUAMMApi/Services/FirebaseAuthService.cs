@@ -6,7 +6,7 @@ namespace PostresUAMMApi.Services;
 
 public interface IFirebaseAuthService
 {
-    Task<UserCredential> SignUpAsync(string email, string password);
+    Task<UserCredential> SignUpAsync(string email, string password, string fullName);
 
     Task<UserCredential> SignUpCustomerAsync(UserRegistrationForm form);
 
@@ -24,9 +24,10 @@ public class FirebaseAuthService(
     private readonly FirebaseAuthClient _firebaseAuthClient = firebaseAuthClient;
     private readonly FirebaseAuthConfig _firebaseAuthConfig = firebaseAuthConfig;
 
-    public async Task<UserCredential> SignUpAsync(string email, string password)
+    public async Task<UserCredential> SignUpAsync(string email, string password, string fullName)
     {
-        UserCredential userCredential = await _firebaseAuthClient.CreateUserWithEmailAndPasswordAsync(email, password);
+        UserCredential userCredential = await _firebaseAuthClient
+            .CreateUserWithEmailAndPasswordAsync(email, password, fullName);
 
         await SendVerificationEmailAsync(userCredential);
 
@@ -38,13 +39,14 @@ public class FirebaseAuthService(
         ArgumentNullException.ThrowIfNull(form);
         ArgumentNullException.ThrowIfNull(form.Email);
         ArgumentNullException.ThrowIfNull(form.Password);
+        ArgumentNullException.ThrowIfNull(form.FullName);
 
         if (!form.Email.EndsWith("@alumnos.uat.edu.mx") && !form.Email.EndsWith("@docentes.uat.edu.mx"))
         {
             throw new ArgumentException("El correo electrónico debe ser de la UAT");
         }
 
-        return await SignUpAsync(form.Email, form.Password);
+        return await SignUpAsync(form.Email, form.Password, form.FullName);
     }
 
     public async Task<string> LoginAsync(string email, string password)
@@ -65,12 +67,14 @@ public class FirebaseAuthService(
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         string userIdToken = await userCredential.User.GetIdTokenAsync();
-        string requestUri = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={_firebaseAuthConfig.ApiKey}";
-        StringContent stringContent = new(
-            $@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userIdToken}""}}",
-            new MediaTypeHeaderValue("application/json"));
 
-        HttpResponseMessage response = await httpClient.PostAsync(requestUri, stringContent);
+        StringContent stringContent = new(
+            content: $@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userIdToken}""}}",
+            mediaType: new MediaTypeHeaderValue("application/json"));
+
+        HttpResponseMessage response = await httpClient.PostAsync(
+            requestUri: $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={_firebaseAuthConfig.ApiKey}",
+            content: stringContent);
 
         response.EnsureSuccessStatusCode();
     }

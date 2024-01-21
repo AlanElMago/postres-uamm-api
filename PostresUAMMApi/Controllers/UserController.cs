@@ -1,4 +1,5 @@
 ﻿using Firebase.Auth;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using PostresUAMMApi.Enums;
 using PostresUAMMApi.Models;
@@ -26,6 +27,7 @@ public class UserController(
             UserCredential userCredential = await _firebaseAuthService.SignUpCustomerAsync(form);
             Customer newCustomer = await _userService.AddCustomerAsync(userCredential);
 
+            // TODO: Set location uri header after creating the get customer endpoint
             return StatusCode((int) HttpStatusCode.Created, newCustomer);
         }
         catch (Exception e) when (e is ArgumentException || e is ArgumentNullException)
