@@ -85,6 +85,6 @@ public class FirebaseAuthServiceTests()
         await _firebaseAuthService!.Login(email, password);
 
         // Assert
-        Assert.DoesNotThrow(() => _firebaseAuthService.SignOut());
+        Assert.DoesNotThrow(() => _firebaseAuthService.Logout());
     }
 }

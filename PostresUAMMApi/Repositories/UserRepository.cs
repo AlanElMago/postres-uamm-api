@@ -33,7 +33,10 @@ public class UserRepository(FirestoreDb firestoreDb) : IUserRepository
 
     public async Task<User> GetUserAsync(string id)
     {
-        DocumentSnapshot userDocSnapshot = await _firestoreDb.Collection("users").Document(id).GetSnapshotAsync();
+        DocumentSnapshot userDocSnapshot = await _firestoreDb
+            .Collection("users")
+            .Document(id)
+            .GetSnapshotAsync();
 
         if (!userDocSnapshot.Exists)
         {

@@ -1,4 +1,5 @@
 ﻿using Firebase.Auth;
+using PostresUAMMApi.Models.Forms;
 using System.Net.Http.Headers;
 
 namespace PostresUAMMApi.Services;
@@ -7,9 +8,11 @@ public interface IFirebaseAuthService
 {
     Task<UserCredential> SignUp(string email, string password);
 
+    Task<UserCredential> SignUpCustomer(UserRegistrationForm form);
+
     Task<string> Login(string email, string password);
 
-    void SignOut();
+    void Logout();
 
     Task SendVerificationEmailAsync(UserCredential userCredential);
 }
@@ -30,6 +33,20 @@ public class FirebaseAuthService(
         return userCredential;
     }
 
+    public async Task<UserCredential> SignUpCustomer(UserRegistrationForm form)
+    {
+        ArgumentNullException.ThrowIfNull(form);
+        ArgumentNullException.ThrowIfNull(form.Email);
+        ArgumentNullException.ThrowIfNull(form.Password);
+
+        if (!form.Email.EndsWith("@alumnos.uat.edu.mx") && !form.Email.EndsWith("@docentes.uat.edu.mx"))
+        {
+            throw new ArgumentException("El correo electrónico debe ser de la UAT");
+        }
+
+        return await SignUp(form.Email, form.Password);
+    }
+
     public async Task<string> Login(string email, string password)
     {
         UserCredential userCredential = await _firebaseAuthClient.SignInWithEmailAndPasswordAsync(email, password);
@@ -37,7 +54,7 @@ public class FirebaseAuthService(
         return await userCredential.User.GetIdTokenAsync();
     }
 
-    public void SignOut() => _firebaseAuthClient.SignOut();
+    public void Logout() => _firebaseAuthClient.SignOut();
 
     // Note: The domain "@alumnos.uat.edu.mx" seems to block the email verification.
     // TODO: Investigate why.
@@ -47,8 +64,8 @@ public class FirebaseAuthService(
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        string userToken = await userCredential.User.GetIdTokenAsync();
-        StringContent content = new($@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userToken}""}}");
+        string userIdToken = await userCredential.User.GetIdTokenAsync();
+        StringContent content = new($@"{{""requestType"":""VERIFY_EMAIL"",""idToken"":""{userIdToken}""}}");
 
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 

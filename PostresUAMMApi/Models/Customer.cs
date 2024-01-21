@@ -17,4 +17,7 @@ public class Customer
 
     [FirestoreProperty(Name = "isVerifiedByAdmin")]
     public bool IsVerifiedByAdmin { get; set; } = false;
+
+    // composite property
+    public User? User { get; set; }
 }
