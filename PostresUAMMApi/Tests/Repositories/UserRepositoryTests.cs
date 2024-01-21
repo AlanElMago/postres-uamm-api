@@ -9,7 +9,7 @@ namespace PostresUAMMApi.Tests.Repositories;
 public class UserRepositoryTests
 {
     private FirestoreDb? _firestoreDb;
-    private UserRepository? _userRepository;
+    private UserRepository? _userRepo;
 
     [SetUp]
     public void Setup()
@@ -23,7 +23,7 @@ public class UserRepositoryTests
         FirestoreDbBuilder builder = new() { ProjectId = "postres-uamm-firebase" };
 
         _firestoreDb = builder.Build();
-        _userRepository = new UserRepository(_firestoreDb);
+        _userRepo = new UserRepository(_firestoreDb);
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class UserRepositoryTests
         // Arrange
 
         // Act
-        List<User> users = await _userRepository!.GetUsersAsync();
+        List<User> users = await _userRepo!.GetUsersAsync();
 
         // Assert
         Assert.That(users, Is.Not.Null);
@@ -47,16 +47,19 @@ public class UserRepositoryTests
         User user = new()
         {
             FirebaseAuthUid = "DZUGstIm8XPehNBuBEHPTpwzT1w1",
+            FullName = "John Smith",
             Roles = [RolesEnum.Baker, RolesEnum.Seller]
         };
 
         // Act
-        User newUser = await _userRepository!.AddUserAsync(user);
+        User newUser = await _userRepo!.AddUserAsync(user);
 
         // Assert
         Assert.That(newUser, Is.Not.Null);
         Assert.That(newUser, Is.InstanceOf<User>());
         Assert.That(newUser.FirebaseAuthUid, Is.EqualTo(user.FirebaseAuthUid));
+        Assert.That(newUser.FullName, Is.EqualTo(user.FullName));
+        Assert.That(newUser.Roles, Has.Member(RolesEnum.Baker).And.Member(RolesEnum.Seller));
     }
 
     [Test]
@@ -66,7 +69,7 @@ public class UserRepositoryTests
         string firebaseAuthUid = "DZUGstIm8XPehNBuBEHPTpwzT1w1";
 
         // Act
-        User user = await _userRepository!.GetUserByFirebaseUidAsync(firebaseAuthUid);
+        User user = await _userRepo!.GetUserByFirebaseUidAsync(firebaseAuthUid);
 
         // Assert
         Assert.That(user, Is.Not.Null);
@@ -79,8 +82,9 @@ public class UserRepositoryTests
     {
         // Arrange
         string firebaseAuthUid = "DZUGstIm8XPehNBuBEHPTpwzT1w1";
-        User user = _userRepository!.GetUserByFirebaseUidAsync(firebaseAuthUid).Result;
+        User user = _userRepo!.GetUserByFirebaseUidAsync(firebaseAuthUid).Result;
 
+        user.FullName = "John Doe";
         user.Roles = [RolesEnum.Admin, RolesEnum.Customer];
         user.IsEnabled = false;
 
@@ -90,12 +94,13 @@ public class UserRepositoryTests
         }
 
         // Act
-        User updatedUser = await _userRepository!.UpdateUserAsync(user.Id, user);
+        User updatedUser = await _userRepo!.UpdateUserAsync(user.Id, user);
 
         // Assert
         Assert.That(updatedUser, Is.Not.Null);
         Assert.That(updatedUser, Is.InstanceOf<User>());
         Assert.That(updatedUser.FirebaseAuthUid, Is.EqualTo(firebaseAuthUid));
+        Assert.That(updatedUser.FullName, Is.EqualTo("John Doe"));
         Assert.That(updatedUser.Roles, Has.Member(RolesEnum.Admin).And.Member(RolesEnum.Customer));
         Assert.That(updatedUser.IsEnabled, Is.False);
     }

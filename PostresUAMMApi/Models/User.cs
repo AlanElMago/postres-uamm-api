@@ -12,6 +12,9 @@ public class User
     [FirestoreProperty(Name = "firebaseAuthUid")]
     public string? FirebaseAuthUid { get; set; }
 
+    [FirestoreProperty(Name = "fullName")]
+    public string? FullName { get; set; }
+
     [FirestoreProperty(Name = "roles")]
     public List<RolesEnum> Roles { get; set; } = [RolesEnum.None];
 

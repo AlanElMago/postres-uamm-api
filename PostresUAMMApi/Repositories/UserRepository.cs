@@ -9,8 +9,8 @@ public class UserRepository(FirestoreDb firestoreDb)
 
     public async Task<List<User>> GetUsersAsync()
     {
-        Query allUsersQuery = _firestoreDb.Collection("users");
-        QuerySnapshot allUsersQuerySnapshot = await allUsersQuery.GetSnapshotAsync();
+        Query usersCollQuery = _firestoreDb.Collection("users");
+        QuerySnapshot allUsersQuerySnapshot = await usersCollQuery.GetSnapshotAsync();
         List<User> users = allUsersQuerySnapshot.Select(userDocSnapshot => userDocSnapshot.ConvertTo<User>()).ToList();
 
         return users;
@@ -31,7 +31,8 @@ public class UserRepository(FirestoreDb firestoreDb)
 
         if (userQuerySnapshot.Count <= 0)
         {
-            throw new InvalidOperationException($"User with firebaseAuthUid {firebaseAuthUid} does not exist in the database");
+            throw new InvalidOperationException(
+                $"User with firebaseAuthUid {firebaseAuthUid} does not exist in the database");
         }
 
         User user = userQuerySnapshot.Documents[0].ConvertTo<User>();
@@ -41,22 +42,22 @@ public class UserRepository(FirestoreDb firestoreDb)
 
     public async Task<User> AddUserAsync(User user)
     {
-        CollectionReference usersCollectionReference = _firestoreDb.Collection("users");
-        DocumentReference documentReference = await usersCollectionReference.AddAsync(user);
-        DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
-        User newUser = documentSnapshot.ConvertTo<User>();
+        CollectionReference usersCollRef = _firestoreDb.Collection("users");
+        DocumentReference userDocRef = await usersCollRef.AddAsync(user);
+        DocumentSnapshot userDocSnapshot = await userDocRef.GetSnapshotAsync();
+        User newUser = userDocSnapshot.ConvertTo<User>();
 
         return newUser;
     }
 
     public async Task<User> UpdateUserAsync(string id, User user)
     {
-        DocumentReference documentReference = _firestoreDb.Collection("users").Document(id);
+        DocumentReference userDocRef = _firestoreDb.Collection("users").Document(id);
 
-        await documentReference.SetAsync(user, SetOptions.Overwrite);
+        await userDocRef.SetAsync(user, SetOptions.Overwrite);
 
-        DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
-        User updatedUser = documentSnapshot.ConvertTo<User>();
+        DocumentSnapshot userDocSnapshot = await userDocRef.GetSnapshotAsync();
+        User updatedUser = userDocSnapshot.ConvertTo<User>();
 
         return updatedUser;
     }
