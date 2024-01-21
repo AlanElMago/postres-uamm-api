@@ -37,9 +37,9 @@ public class FirebaseAuthService(
     public async Task<UserCredential> SignUpCustomerAsync(UserRegistrationForm form)
     {
         ArgumentNullException.ThrowIfNull(form);
-        ArgumentNullException.ThrowIfNull(form.Email);
-        ArgumentNullException.ThrowIfNull(form.Password);
-        ArgumentNullException.ThrowIfNull(form.FullName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(form.Email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(form.Password);
+        ArgumentException.ThrowIfNullOrWhiteSpace(form.FullName);
 
         if (!form.Email.EndsWith("@alumnos.uat.edu.mx") && !form.Email.EndsWith("@docentes.uat.edu.mx"))
         {
