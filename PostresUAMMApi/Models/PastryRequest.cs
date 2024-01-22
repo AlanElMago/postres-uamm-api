@@ -21,6 +21,12 @@ public class PastryRequest
     [FirestoreProperty(Name = "statusMessage")]
     public string? StatusMessage { get; set; }
 
+    [FirestoreDocumentCreateTimestamp]
+    public DateTime CreateTime { get; set; }
+
+    [FirestoreDocumentUpdateTimestamp]
+    public DateTime UpdateTime { get; set; }
+
     // composite property
     public CampusLocation? CampusLocation { get; set; }
 }

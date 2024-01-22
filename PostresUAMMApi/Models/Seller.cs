@@ -17,6 +17,12 @@ public class Seller
     [FirestoreProperty(Name = "statusMessage")]
     public string? StatusMessage { get; set; }
 
+    [FirestoreDocumentCreateTimestamp]
+    public DateTime CreateTime { get; set; }
+
+    [FirestoreDocumentUpdateTimestamp]
+    public DateTime UpdateTime { get; set; }
+
     // composite property
     public User? User { get; set; }
 }

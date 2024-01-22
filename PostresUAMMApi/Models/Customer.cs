@@ -18,6 +18,12 @@ public class Customer
     [FirestoreProperty(Name = "isVerifiedByAdmin")]
     public bool IsVerifiedByAdmin { get; set; } = false;
 
+    [FirestoreDocumentCreateTimestamp]
+    public Timestamp CreateTime { get; set; }
+
+    [FirestoreDocumentUpdateTimestamp]
+    public Timestamp UpdateTime { get; set; }
+
     // composite property
     public User? User { get; set; }
 }

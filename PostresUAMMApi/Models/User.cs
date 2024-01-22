@@ -20,4 +20,10 @@ public class User
 
     [FirestoreProperty(Name = "isEnabled")]
     public bool IsEnabled { get; set; } = true;
+
+    [FirestoreDocumentCreateTimestamp]
+    public DateTime CreateTime { get; set;}
+
+    [FirestoreDocumentUpdateTimestamp]
+    public DateTime UpdateTime { get; set;}
 }
