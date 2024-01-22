@@ -10,7 +10,7 @@ public interface IFirebaseAuthService
 
     Task<UserCredential> SignUpCustomerAsync(UserRegistrationForm form);
 
-    Task<string> LoginAsync(string email, string password);
+    Task<string> LoginAsync(UserLoginForm form);
 
     void Logout();
 
@@ -49,9 +49,13 @@ public class FirebaseAuthService(
         return await SignUpAsync(form.Email, form.Password, form.FullName);
     }
 
-    public async Task<string> LoginAsync(string email, string password)
+    public async Task<string> LoginAsync(UserLoginForm form)
     {
-        UserCredential userCredential = await _firebaseAuthClient.SignInWithEmailAndPasswordAsync(email, password);
+        ArgumentException.ThrowIfNullOrWhiteSpace(form.Email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(form.Password);
+
+        UserCredential userCredential = await _firebaseAuthClient
+            .SignInWithEmailAndPasswordAsync(form.Email, form.Password);
 
         return await userCredential.User.GetIdTokenAsync();
     }

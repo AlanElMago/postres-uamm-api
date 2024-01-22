@@ -69,7 +69,7 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        string idToken = await _firebaseAuthService!.LoginAsync(email, password);
+        string idToken = await _firebaseAuthService!.LoginAsync(new Models.Forms.UserLoginForm() { Email = email, Password = password });
 
         // Assert
         Assert.That(idToken, Is.Not.Null);
@@ -83,7 +83,7 @@ public class FirebaseAuthServiceTests()
         string password = "password";
 
         // Act
-        await _firebaseAuthService!.LoginAsync(email, password);
+        await _firebaseAuthService!.LoginAsync(new Models.Forms.UserLoginForm() { Email = email, Password = password } );
 
         // Assert
         Assert.DoesNotThrow(() => _firebaseAuthService.Logout());
