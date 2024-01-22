@@ -27,6 +27,8 @@ public class PastryRequest
     [FirestoreDocumentUpdateTimestamp]
     public DateTime UpdateTime { get; set; }
 
-    // composite property
+    // composite properties
+    public Customer? Customer { get; set; }
+
     public CampusLocation? CampusLocation { get; set; }
 }
