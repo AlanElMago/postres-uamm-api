@@ -2,8 +2,8 @@
 
 namespace PostresUAMMApi.Enums;
 
-[FirestoreData(ConverterType = typeof(FirestoreEnumNameConverter<RolesEnum>))]
-public enum RolesEnum
+[FirestoreData(ConverterType = typeof(FirestoreEnumNameConverter<UserRoles>))]
+public enum UserRoles
 {
     None,
     Admin,

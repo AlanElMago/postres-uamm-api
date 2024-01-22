@@ -47,7 +47,7 @@ public class CustomerRepositoryTests
         Customer customer = new()
         {
             UserId = "VK3pLwneEJhi08qX4Ig7",
-            CustomerType = CustomerTypesEnum.Student,
+            CustomerType = CustomerTypes.Student,
             IsVerifiedByAdmin = false
         };
 
@@ -86,7 +86,7 @@ public class CustomerRepositoryTests
             throw new InvalidOperationException("customer id is null");
         }
 
-        customer.CustomerType = CustomerTypesEnum.Teacher;
+        customer.CustomerType = CustomerTypes.Teacher;
         customer.IsVerifiedByAdmin = true;
 
         // Act

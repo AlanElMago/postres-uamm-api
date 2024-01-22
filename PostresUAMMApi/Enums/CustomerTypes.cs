@@ -2,8 +2,8 @@
 
 namespace PostresUAMMApi.Enums;
 
-[FirestoreData(ConverterType = typeof(FirestoreEnumNameConverter<CustomerTypesEnum>))]
-public enum CustomerTypesEnum
+[FirestoreData(ConverterType = typeof(FirestoreEnumNameConverter<CustomerTypes>))]
+public enum CustomerTypes
 {
     None = 0,
     Student = 1,

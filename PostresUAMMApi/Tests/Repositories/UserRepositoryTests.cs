@@ -48,7 +48,7 @@ public class UserRepositoryTests
         {
             FirebaseAuthUid = "DZUGstIm8XPehNBuBEHPTpwzT1w1",
             FullName = "John Smith",
-            Roles = [RolesEnum.Baker, RolesEnum.Seller]
+            Roles = [UserRoles.Baker, UserRoles.Seller]
         };
 
         // Act
@@ -59,7 +59,7 @@ public class UserRepositoryTests
         Assert.That(newUser, Is.InstanceOf<User>());
         Assert.That(newUser.FirebaseAuthUid, Is.EqualTo(user.FirebaseAuthUid));
         Assert.That(newUser.FullName, Is.EqualTo(user.FullName));
-        Assert.That(newUser.Roles, Has.Member(RolesEnum.Baker).And.Member(RolesEnum.Seller));
+        Assert.That(newUser.Roles, Has.Member(UserRoles.Baker).And.Member(UserRoles.Seller));
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class UserRepositoryTests
         User user = _userRepo!.GetUserByFirebaseUidAsync(firebaseAuthUid).Result;
 
         user.FullName = "John Doe";
-        user.Roles = [RolesEnum.Admin, RolesEnum.Customer];
+        user.Roles = [UserRoles.Admin, UserRoles.Customer];
         user.IsEnabled = false;
 
         if (user.Id is null)
@@ -101,7 +101,7 @@ public class UserRepositoryTests
         Assert.That(updatedUser, Is.InstanceOf<User>());
         Assert.That(updatedUser.FirebaseAuthUid, Is.EqualTo(firebaseAuthUid));
         Assert.That(updatedUser.FullName, Is.EqualTo("John Doe"));
-        Assert.That(updatedUser.Roles, Has.Member(RolesEnum.Admin).And.Member(RolesEnum.Customer));
+        Assert.That(updatedUser.Roles, Has.Member(UserRoles.Admin).And.Member(UserRoles.Customer));
         Assert.That(updatedUser.IsEnabled, Is.False);
     }
 }

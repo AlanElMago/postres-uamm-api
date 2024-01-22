@@ -13,7 +13,7 @@ public class Customer
     public string? UserId { get; set; }
 
     [FirestoreProperty(Name = "customerType")]
-    public CustomerTypesEnum CustomerType { get; set; } = CustomerTypesEnum.None;
+    public CustomerTypes CustomerType { get; set; } = CustomerTypes.None;
 
     [FirestoreProperty(Name = "isVerifiedByAdmin")]
     public bool IsVerifiedByAdmin { get; set; } = false;

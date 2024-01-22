@@ -16,7 +16,7 @@ public class User
     public string? FullName { get; set; }
 
     [FirestoreProperty(Name = "roles")]
-    public List<RolesEnum> Roles { get; set; } = [RolesEnum.None];
+    public List<UserRoles> Roles { get; set; } = [UserRoles.None];
 
     [FirestoreProperty(Name = "isEnabled")]
     public bool IsEnabled { get; set; } = true;
