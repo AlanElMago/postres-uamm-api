@@ -11,7 +11,7 @@ public interface IPastryRequestRepository
 
     public Task<PastryRequest> AddPastryRequestAsync(PastryRequest pastryRequest);
 
-    public Task<PastryRequest> UpdatePastryRequestAsync(PastryRequest pastryRequest);
+    public Task<PastryRequest> UpdatePastryRequestAsync(string id, PastryRequest pastryRequest);
 }
 
 public class PastryRequestRepository(FirestoreDb firestoreDb) : IPastryRequestRepository
@@ -55,9 +55,9 @@ public class PastryRequestRepository(FirestoreDb firestoreDb) : IPastryRequestRe
         return addedPastryRequest;
     }
 
-    public async Task<PastryRequest> UpdatePastryRequestAsync(PastryRequest pastryRequest)
+    public async Task<PastryRequest> UpdatePastryRequestAsync(string id, PastryRequest pastryRequest)
     {
-        DocumentReference pastryRequestDocRef = _firestoreDb.Collection("pastryRequests").Document(pastryRequest.Id);
+        DocumentReference pastryRequestDocRef = _firestoreDb.Collection("pastryRequests").Document(id);
 
         await pastryRequestDocRef.SetAsync(pastryRequest);
 

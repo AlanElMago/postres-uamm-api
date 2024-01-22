@@ -78,6 +78,9 @@ public class CustomerRepository(FirestoreDb firestoreDb) : ICustomerRepository
         DocumentReference customerDocRef = _firestoreDb.Collection("customers").Document(id);
         await customerDocRef.SetAsync(customer, SetOptions.Overwrite);
 
-        return customer;
+        DocumentSnapshot customerDocSnapshot = await customerDocRef.GetSnapshotAsync();
+        Customer updatedCustomer = customerDocSnapshot.ConvertTo<Customer>();
+
+        return updatedCustomer;
     }
 }
