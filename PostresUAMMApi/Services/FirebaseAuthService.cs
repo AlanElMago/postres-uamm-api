@@ -1,5 +1,8 @@
 ﻿using Firebase.Auth;
+using FirebaseAdmin.Auth;
+using Newtonsoft.Json;
 using PostresUAMMApi.Models.Forms;
+using PostresUAMMApi.Repositories;
 using System.Net.Http.Headers;
 
 namespace PostresUAMMApi.Services;
@@ -19,10 +22,12 @@ public interface IFirebaseAuthService
 
 public class FirebaseAuthService(
     FirebaseAuthClient firebaseAuthClient,
-    FirebaseAuthConfig firebaseAuthConfig) : IFirebaseAuthService
+    FirebaseAuthConfig firebaseAuthConfig,
+    IUserRepository userRepository) : IFirebaseAuthService
 {
     private readonly FirebaseAuthClient _firebaseAuthClient = firebaseAuthClient;
     private readonly FirebaseAuthConfig _firebaseAuthConfig = firebaseAuthConfig;
+    private readonly IUserRepository _userRepository = userRepository;
 
     public async Task<UserCredential> SignUpAsync(string email, string password, string fullName)
     {
@@ -57,7 +62,16 @@ public class FirebaseAuthService(
         UserCredential userCredential = await _firebaseAuthClient
             .SignInWithEmailAndPasswordAsync(form.Email, form.Password);
 
-        return await userCredential.User.GetIdTokenAsync();
+        Models.User user = await _userRepository.GetUserByFirebaseUidAsync(userCredential.User.Uid);
+
+        Dictionary<string, object>? userAsDictionary = JsonConvert
+            .DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(user));
+
+        string customToken = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(
+            userCredential.User.Uid, userAsDictionary
+        );
+
+        return customToken;
     }
 
     public void Logout() => _firebaseAuthClient.SignOut();

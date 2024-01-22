@@ -1,5 +1,7 @@
 using Firebase.Auth;
 using Firebase.Auth.Providers;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +18,13 @@ string pathToFirebaseSecretKey = Path.Combine(
 
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToFirebaseSecretKey);
 builder.Configuration.AddUserSecrets("382d69e6-8486-43ba-a6b4-edb9cde00db0");
+
+// Initialize Firebase Admin SDK.
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.GetApplicationDefault(),
+    ProjectId = firebaseProjectName
+});
 
 // Add services to the container.
 builder.Services.AddSingleton(new FirebaseAuthConfig
