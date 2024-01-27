@@ -1,10 +1,6 @@
-using Firebase.Auth;
-using Firebase.Auth.Providers;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using PostresUAMMApi.Repositories;
 using PostresUAMMApi.Services;
 
@@ -20,42 +16,18 @@ Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToFireb
 builder.Configuration.AddUserSecrets("382d69e6-8486-43ba-a6b4-edb9cde00db0");
 
 // Initialize Firebase Admin SDK.
-FirebaseApp.Create(new AppOptions
-{
-    Credential = GoogleCredential.GetApplicationDefault(),
-    ProjectId = firebaseProjectName
-});
+FirebaseApp.Create(new AppOptions { Credential = GoogleCredential.FromFile(pathToFirebaseSecretKey) });
 
 // Add services to the container.
-builder.Services.AddSingleton(new FirebaseAuthConfig
-{
-    ApiKey = builder.Configuration["FirebaseWebApiKey"],
-    AuthDomain = $"{firebaseProjectName}.firebaseapp.com",
-    Providers = new FirebaseAuthProvider[] { new EmailProvider() }
-});
 builder.Services.AddSingleton(new FirestoreDbBuilder { ProjectId = firebaseProjectName }.Build());
-builder.Services.AddScoped<FirebaseAuthClient>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
+builder.Services.AddScoped<IPastryRequestRepository, PastryRequestRepository>();
 
-builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
-// Add Firebase authentication using JWT tokens.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.Authority = $"https://securetoken.google.com/{firebaseProjectName}";
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidIssuer = $"https://securetoken.google.com/{firebaseProjectName}",
-        ValidateAudience = true,
-        ValidAudience = firebaseProjectName,
-        ValidateLifetime = true
-    };
-});
+builder.Services.AddScoped<IPastryRequestService, PastryRequestService>();
 
 // Add controllers to the container.
 builder.Services.AddControllers();
@@ -73,7 +45,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

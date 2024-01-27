@@ -1,14 +1,13 @@
-﻿using Firebase.Auth;
-using PostresUAMMApi.Enums;
+﻿using PostresUAMMApi.Models;
 using PostresUAMMApi.Repositories;
 
 namespace PostresUAMMApi.Services;
 
 public interface IUserService
 {
-    Task<Models.User> AddUserAsync(Models.User user);
+    // Task<Models.User> AddUserAsync(Models.User user);
 
-    Task<Models.Customer> AddCustomerAsync(UserCredential userCredential);
+    // Task<Models.Customer> AddCustomerAsync(UserCredential userCredential);
 }
 
 public class UserService(
@@ -18,32 +17,13 @@ public class UserService(
     private readonly IUserRepository _userRepository = userRepository;
     private readonly ICustomerRepository _customerRepository = customerRepository;
 
-    public async Task<Models.User> AddUserAsync(Models.User user)
+    public async Task<User> AddUserAsync()
     {
-        Models.User newUser = await _userRepository.AddUserAsync(user);
-
-        return newUser;
+        throw new NotImplementedException();
     }
 
-    public async Task<Models.Customer> AddCustomerAsync(UserCredential userCredential)
+    public async Task<Customer> AddCustomerAsync()
     {
-        Models.User newUser = await AddUserAsync(new Models.User
-        {
-            FirebaseAuthUid = userCredential.User.Uid,
-            FullName = userCredential.User.Info.DisplayName,
-            Roles = [ UserRoles.Customer ]
-        });
-
-        Models.Customer newCustomer = await _customerRepository.AddCustomerAsync(new Models.Customer
-        {
-            UserId = newUser.Id,
-            CustomerType = userCredential.User.Info.Email.EndsWith("@alumnos.uat.edu.mx")
-                ? CustomerTypes.Student
-                : CustomerTypes.Teacher,
-        });
-
-        newCustomer.User = newUser;
-
-        return newCustomer;
+        throw new NotImplementedException();
     }
 }
